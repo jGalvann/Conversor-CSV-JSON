@@ -5,7 +5,7 @@ function App() {
   const [csv, setCsv] = useState('')
   const [jsonResult, setJsonResult] = useState('')
   
-  const conversorCsvParaJson = () => {
+  const csvParaJson = () => {
 
     try {
 
@@ -31,6 +31,32 @@ function App() {
     }
   }
 
+  const jsonParaCsv = () => { 
+
+    try { 
+
+      if(!csv.trim()) return alert("O campo está vazio. Insira um conteúdo válido!");
+
+      const conteudo = JSON.parse(csv);
+
+      if (!Array.isArray(conteudo) || conteudo.length == 0) {
+        return alert("O JSON deve ser um array de objetos e não pode estar vazio!");
+      }
+
+      const cabecalho = Object.keys(conteudo[0]);
+      const csvCabecalho = cabecalho.join(',')
+
+      const csvLinhas = conteudo.map(item => {
+        return cabecalho.map(header => item[header]).join(',');
+      });
+
+      setJsonResult([csvCabecalho, ...csvLinhas].join('\n'));
+    } catch (error) {
+      alert("Não deu boa, verifique o formato do arquivo aí");
+    }
+
+  }
+
   return (
     <div className="container">
       <h1>Conversor de CSV para JSON</h1>
@@ -43,7 +69,8 @@ function App() {
         />
       
       <div className='button-area'>
-        <button onClick={conversorCsvParaJson}>Converter</button>
+        <button onClick={csvParaJson}>CSV para Json</button>
+        <button onClick={jsonParaCsv}>JSON para CSV</button>
         <button onClick={() => {setCsv(''); setJsonResult('')}} className="btn-limpar">Limpar</button>
       </div>
 
